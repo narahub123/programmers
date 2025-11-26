@@ -1,62 +1,80 @@
 function solution(today, terms, privacies) {
+    const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     
-    // 약관별 추가
-    // 배열을 object로 변경하기 
-    const plus = {};
-    terms.forEach(term => {
-        const p = term.split(" ");
-        plus[p[0]] = Number(p[1]);
-    });
+    const dates = [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+      11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+      21, 22, 23, 24, 25, 26, 27, 28, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+      11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+      21, 22, 23, 24, 25, 26, 27, 28
+    ];
     
+    const [tY, tM, tD] = today.split('.').map(Number);
     
-    // 만료일 구하기 
-    const expires = privacies.map(privacy => {
-        const div = privacy.split(" ");
-        const term = div[1];
+    const map = new Map();
+    
+    // 계약 이름 및 계약 기간 분리
+    for(let term of terms){
+        const [t, d] = term.split(' ').map((t, index) => {
+            if(index === 1) return Number(t);
+            return t; 
+        })
         
-        // 추가해야 하는 달 
-        const add = plus[term];
+        map.set(t, d);
+    }
+    
+    console.log(map);
+    
+    // 개인 정보 파악 및 정리
+    const expires = [];
+    
+    for(let i = 0; i < privacies.length; i++){
+        const privacy = privacies[i];
         
-        // 수집일자
-        const start = div[0];
+        const [startDate, term] = privacy.split(" ").map((p, idx) => {
+            if(idx === 0){
+                return p.split('.').map(Number);
+            }
+            
+            return p;
+        });
         
-        // 년, 달
-        let [year, month, date] = start.split('.').map(Number);
+        // 계약 시작일 
+        let [sY, sM, sD] = startDate;
         
-        if(month + add > 12){
-            year += Math.floor((month + add-1) / 12);
-            month = (month + add) % 12 === 0 ? 12 : (month + add) % 12;
-        } else {
-            month += add;
+        // 게약 기간 
+        const duration = map.get(term);
+        
+        // 계약 시작 달 + 계약 달이 12가 넘는 경우 year + 1
+        
+        const totalMonth = sM + duration
+        if(totalMonth > 12){
+           sY += Math.floor((totalMonth - 1)/ 12); 
         }
         
-        date -= 1;
-        if (date === 0) {
-          date = 28;
-          month -= 1;
-          if (month === 0) {
-            month = 12;
-            year -= 1;
-          }
-        }
-
+        sM = months[(totalMonth - 1) % 12 ] ;
         
-        return [year, month, date]
-    })
-    
-    const expired = [];
-    
-    expires.forEach((expire, index) => {
-        const dist = today.split('.').map(Number);
-        if(expire[0] < dist[0]){
-            expired.push(index + 1);
-        } else if(expire[0] === dist[0] && expire[1] < dist[1]){
-            expired.push(index + 1);
-        } else if (expire[0] === dist[0] && expire[1] === dist[1] && expire[2] < dist[2]){
-            expired.push(index + 1);
+        if(sD - 1 === 0){
+            if(sM - 1  === 0){
+                sM = 12;
+                sY -= 1;
+            } else {
+                sM -= 1;    
+            }
+            
         }
-    })
+        
+        sD = dates[(sD - 1) + 28 - 1];
+        
+        
+        if(sY < tY){
+            expires.push(i+1)
+        } else if(sY === tY && sM < tM){
+            expires.push(i+1)
+        } else if(sY === tY && sM === tM && sD < tD){
+            expires.push(i+1)
+        }
+    }
     
-    console.log(expired);
-    return expired;
+   return expires
 }
