@@ -1,61 +1,37 @@
 function solution(bandage, health, attacks) {
-    // 연속 시간
-    let duration = 0;
-    // 현재 체력
-    let stamina = health;
-    // 최대 연속 시간
-    const time = bandage[0];
-    // 초 당 회복량 
-    const hPS = bandage[1];
-    // 추가 회복량 
-    const bonus = bandage[2];
-    // 종료 시간 
-    const attackObj = Object.fromEntries(attacks);
-    const attackTimes = Object.keys(attackObj).map(Number);
-    const last = attackTimes[attackTimes.length -1];
     
-    for(let i = 1; i <= last; i++){
-        
-        if(stamina <= 0){
-            break;
-        }
-        
-        // 공격 시간이 경우
-        if(attackTimes.includes(i)){
-            // 연속 시간 초기화
-            duration = 0;
-            // 체력 감소
-            stamina -= attackObj[i.toString()];
+    let cont = 0;
+    let stamina = health; 
+    
+    const last = attacks[attacks.length - 1][0];
+    
+    const map = new Map(attacks);
+    
+    for(let i = 0; i <= last; i++){
+        if(map.get(i)){
+            cont = 0;
+            stamina -= map.get(i);
             
-            continue;
+            if(stamina <= 0) return -1;
         } else {
-            // 공격이 아닌 경우
-            // 연속 시간 추가
-            duration++;
-            
-            if(duration === bandage[0]){
-                // 연속 시간 초기화
-                duration = 0;
-                // 추가 체력
-                // 현재 체력이 최대체력을 넘어가는 경우
-                if(stamina + bandage[2] >= health){
-                    stamina = health;
-                    continue;
-                }
-                stamina += bandage[2];
-                
-            }
-            
-            // 체력 추가 
+            ++cont;
             if(stamina + bandage[1] >= health){
                 stamina = health;
-                continue;
+            } else {
+                stamina += bandage[1];    
             }
             
-            stamina += bandage[1];
+            if(cont >= bandage[0]){
+                if(stamina + bandage[2] >= health){
+                    stamina = health;
+                } else {
+                    stamina += bandage[2];    
+                }
+                
+                cont = 0;
+            }
         }
-        
     }
     
-    return stamina > 0 ? stamina : -1;
+    return stamina
 }
