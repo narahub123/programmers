@@ -1,17 +1,20 @@
 function solution(players, callings) {
     
-    const order = Object.fromEntries(players.map((p, i) => [p, i]));
-    
+    const idxMap = new Map(players.map((p, i) => [p, i])); 
     
     for(const calling of callings){
-        // 해당 선수의 순서 
-        const curIndex = order[calling];
-        const prevIndex = curIndex - 1;
         
-        order[calling] = prevIndex;
-        players[curIndex] = players[prevIndex];
-        order[players[prevIndex]] = curIndex;
-        players[prevIndex] = calling;
+        
+        // 인덱스 조회 O(1)
+        const idx = idxMap.get(calling);
+        
+        const before = players[idx - 1];
+        
+        players[idx - 1] = calling;
+        players[idx] = before;
+        
+        idxMap.set(calling, idx-1);
+        idxMap.set(before, idx);
         
     }
     
