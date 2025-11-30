@@ -1,34 +1,31 @@
 function solution(id_list, report, k) {
+    const idMap = new Map(id_list.map(id => [id, {
+        reported: [],
+        emails: 0
+    }]));
     
-    // 사용자 신고 목록을 위한 object
-    const user = {};
-    // key 생성 
-    id_list.forEach((key) => user[key] = {
-        reports: new Set(),
-        reportedBys: new Set(),
-        emails: 0,
-    });
-    
-    // 각 키에 값 추가 
     report.forEach(r => {
-        const [k, v] = r.split(" ");
+        const [re, ed] = r.split(" ");
         
-        user[k].reports.add(v);
+        const obj = idMap.get(ed);
         
-        user[v].reportedBys.add(k);
+        const set = new Set(obj.reported);
         
+        set.add(re);
+        
+        idMap.set(ed, {...obj, reported: [...set]});
     })
     
-    Object.values(user).forEach(userObj => {
-        if(userObj.reportedBys.size >= k){
-            const reported = [...(userObj.reportedBys)];        
-            for(const u of reported){
-                user[u].emails++;    
+    for(const id of id_list){
+        const reports = idMap.get(id)['reported'];
+        
+        if(reports.length >= k){
+            for(const re of reports){
+                const obj = idMap.get(re);
+                idMap.set(re, {...obj, emails: obj.emails + 1})
             }
-        }
-    })
+        } 
+    }
     
-    
-    var answer = Object.values(user).map(u => u.emails);
-    return answer;
+    return id_list.map(id => idMap.get(id)['emails']);
 }
