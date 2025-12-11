@@ -1,45 +1,48 @@
 function solution(friends, gifts) {
-  // 선물 관계
-  const giftRelation = {};
-  for (const friend of friends) {
-    const obj = { index: 0 };
-    const withoutMe = friends.filter(f => f !== friend);
-    for (const f of withoutMe) obj[f] = 0;
-    giftRelation[friend] = obj;
+  const n = friends.length;
+  const idxByName = new Map();
+  for (let i = 0; i < n; i++) idxByName.set(friends[i], i);
+
+  // table[i][j] = i가 j에게 준 횟수
+  const table = Array.from({ length: n }, () => Array(n).fill(0));
+  // giftIndex[i] = (i가 준 총개수) - (i가 받은 총개수)
+  const giftIndex = Array(n).fill(0);
+
+  // 입력 처리
+  for (const g of gifts) {
+    const parts = g.trim().split(/\s+/);
+    if (parts.length < 2) continue;
+    const giver = parts[0], receiver = parts[1];
+    if (!idxByName.has(giver) || !idxByName.has(receiver)) continue; // 안전장치
+    const gi = idxByName.get(giver), ri = idxByName.get(receiver);
+    table[gi][ri] += 1;
+    giftIndex[gi] += 1;
+    giftIndex[ri] -= 1;
   }
 
-  // 선물을 주고 받은 관계(쌍대 차와 지수 갱신)
-  for (const gift of gifts) {
-    const [giver, receiver] = gift.split(' ');
-    giftRelation[giver][receiver]++;   // giver → receiver
-    giftRelation[giver].index++;       // 지수 +
-    giftRelation[receiver][giver]--;   // 반대편 차이 대칭 업데이트
-    giftRelation[receiver].index--;    // 지수 -
-  }
+  // 다음 달 받을 예상 수
+  const nextReceive = Array(n).fill(0);
 
-  // 각 사람의 다음 달 수신 수 계산
-  const newArr = friends.map(me => {
-    const a = giftRelation[me];
-    const myIndex = a.index;
-    let gift = 0;
-
-    // 상대 목록: 'index' 키 제외
-    const names = Object.keys(a).filter(k => k !== 'index');
-
-    for (const name of names) {
-      const diff = a[name];                  // me ↔ name 선물 차
-      if (diff > 0) {
-        gift += 1;                           // 내가 더 많이 줬으면 1개 받음
-      } else if (diff === 0) {
-        const otherIndex = giftRelation[name].index;
-        if (myIndex > otherIndex) gift += 1; // 비김 + 지수 우위면 1
+  // 각 서로 다른 쌍(i, j) 에 대해 한 번만 판단 (i < j)
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const aToB = table[i][j];
+      const bToA = table[j][i];
+      if (aToB > bToA) {
+        // i가 더 많이 줬으므로 i가 다음 달에 1개 받음
+        nextReceive[i] += 1;
+      } else if (aToB < bToA) {
+        // j가 더 많이 줬으므로 j가 다음 달에 1개 받음
+        nextReceive[j] += 1;
+      } else {
+        // 주고받은 수가 같거나 둘 다 0이면 giftIndex 비교
+        if (giftIndex[i] > giftIndex[j]) nextReceive[i] += 1;
+        else if (giftIndex[i] < giftIndex[j]) nextReceive[j] += 1;
+        // 같으면 아무 변화 없음
       }
-      // diff < 0 인 경우는 0 (감점 없음)
     }
+  }
 
-    return gift;
-  });
-
-  const max = Math.max(...newArr);
-  return max;
+  // 가장 많이 받을 개수 반환
+  return Math.max(...nextReceive);
 }
