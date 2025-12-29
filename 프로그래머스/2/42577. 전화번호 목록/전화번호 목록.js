@@ -1,11 +1,15 @@
 function solution(phone_book) {
-  phone_book.sort();
-
-  for (let i = 0; i < phone_book.length - 1; i++) {
-    if (phone_book[i + 1].startsWith(phone_book[i])) {
-      return false;
+    // 정렬 
+    phone_book.sort((a, b) => a.localeCompare(b));
+    
+    let result = true;
+    
+    for(let i = 0; i < phone_book.length - 1; i++){
+        if(phone_book[i+1].startsWith(phone_book[i])) {
+            result = false;
+            break;
+        }
     }
-  }
-
-  return true;
+    
+    return result;
 }
