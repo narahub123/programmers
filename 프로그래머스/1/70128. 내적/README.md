@@ -1,10 +1,10 @@
 # [level 1] 내적 - 70128 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/70128) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/70128?language=python3) 
 
 ### 성능 요약
 
-메모리: 33.5 MB, 시간: 0.12 ms
+메모리: 9.28 MB, 시간: 0.10 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 10월 27일 09:23:44
+2026년 04월 07일 09:24:30
 
 ### 문제 설명
 
