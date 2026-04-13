@@ -1,10 +1,10 @@
 # [level 1] 삼총사 - 131705 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/131705) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/131705?language=python3) 
 
 ### 성능 요약
 
-메모리: 33.5 MB, 시간: 2.37 ms
+메모리: 9.22 MB, 시간: 0.11 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 11월 03일 09:21:57
+2026년 04월 13일 09:32:32
 
 ### 문제 설명
 
