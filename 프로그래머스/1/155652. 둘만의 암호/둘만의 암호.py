@@ -1,21 +1,23 @@
 def solution(s, skip, index):
-    alphabet = 'abcdefghijklmnopqrstuvwxyz'
-    skip_set = set(skip)
-
+    alphabet = "abcdefghijklmnopqrstuvwxyz"
+    
     result = []
-
+    
     for char in s:
-        current = alphabet.index(char)
+        # 알파벳에서의 위치 
+        curIdx = alphabet.index(char)
+        
+        # 이동횟수
         count = 0
-
-        while count < index:
-            current = (current + 1) % 26
-
-            if alphabet[current] in skip_set:
-                continue
-
-            count += 1
-
-        result.append(alphabet[current])
-
+        
+        while(count < index):
+            
+            curIdx += 1
+            
+            if alphabet[curIdx % 26] not in skip:
+                count += 1
+                
+        result.append(alphabet[curIdx % 26])
+        
     return "".join(result)
+    
