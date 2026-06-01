@@ -1,25 +1,36 @@
 def solution(n):
     b = format(n, 'b')
+    
+    length = len(b)
+    
+    nextBin = list("0" * length)
+    hasChecked = False
     one = 0
     
-    for d in b:
-        if d == "1":
-            one += 1
-            
-    print("1의 개수", one)
+    for i, bin in enumerate(b):
+        if i == 0:
+            continue
+        elif i == 1:
+            if bin == "1":
+                nextBin[0] = "10"
+                nextBin[1] = "1"
+                hasChecked = True
+            else:
+                nextBin[0] = "1"
+                nextBin[1] = "0"
+            continue
+        if bin == "1":
+            if hasChecked:
+                one += 1
+            else:
+                nextBin[i-1] = "1"
+                nextBin[i] = "0"
+                hasChecked = True
     
-    next = n + 1
-    while True:
-        newB = format(next, 'b')
-        
-        newOne = 0
-        
-        for d in newB:
-            if d == "1":
-                newOne += 1
-                
-        if newOne == one:
-            break
-        next += 1
     
-    return next
+    for i in range(-1, -1*one - 1, -1):
+        nextBin[i] = "1"
+    
+    fBin = "".join(nextBin)
+    
+    return int(fBin, 2)
